@@ -1,4 +1,5 @@
 /Build*/
 /build*/
+/cmake-build-debug*/
 __pycache__/
 uci-log.txt
