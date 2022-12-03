@@ -1,4 +1,4 @@
-#ifndef CHESS_ENGINE_PIECE_HPP
+ #ifndef CHESS_ENGINE_PIECE_HPP
 #define CHESS_ENGINE_PIECE_HPP
 
 #include <optional>
@@ -29,6 +29,10 @@ public:
 
     PieceColor color() const;
     PieceType type() const;
+
+private:
+    PieceColor const pieceColor;
+    PieceType const pieceType;
 };
 
 bool operator==(const Piece& lhs, const Piece& rhs);
