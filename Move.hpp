@@ -22,6 +22,11 @@ public:
     Square to() const;
     std::optional<PieceType> promotion() const;
 
+private:
+    const Square from_;
+    const Square  to_;
+    const std::optional<PieceType> promotion_;
+
 };
 
 std::ostream& operator<<(std::ostream& os, const Move& move);

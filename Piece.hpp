@@ -1,15 +1,18 @@
- #ifndef CHESS_ENGINE_PIECE_HPP
+#ifndef CHESS_ENGINE_PIECE_HPP
 #define CHESS_ENGINE_PIECE_HPP
 
 #include <optional>
 #include <iosfwd>
+#include <unordered_map>
 
-enum class PieceColor {
+enum class PieceColor
+{
     White,
     Black
 };
 
-enum class PieceType {
+enum class PieceType
+{
     Pawn,
     Knight,
     Bishop,
@@ -18,25 +21,34 @@ enum class PieceType {
     King
 };
 
-class Piece {
+class Piece
+{
 public:
 
     using Optional = std::optional<Piece>;
 
     Piece(PieceColor color, PieceType type);
+    Piece(PieceColor color, PieceType type, char symbol);
 
     static Optional fromSymbol(char symbol);
 
     PieceColor color() const;
     PieceType type() const;
+    char symbol() const;
 
 private:
     PieceColor const pieceColor;
     PieceType const pieceType;
+    char const pieceSymbol;
 };
 
-bool operator==(const Piece& lhs, const Piece& rhs);
-std::ostream& operator<<(std::ostream& os, const Piece& piece);
+char fromPieceTypeToChar(const PieceType &pieceType);
+
+bool operator==(const Piece &lhs, const Piece &rhs);
+
+std::ostream &operator<<(std::ostream &os, const Piece &piece);
+
+std::ostream &operator<<(std::ostream &os, const PieceType &pieceType);
 
 // Invert a color (White becomes Black and vice versa)
 PieceColor operator!(PieceColor color);

@@ -1,46 +1,41 @@
 #include "Piece.hpp"
 
 #include <ostream>
+#include <iostream>
 #include <cctype>
 
-Piece::Piece(PieceColor color, PieceType type):
-    pieceColor(color), pieceType(type)
+Piece::Piece(PieceColor color, PieceType type) :
+        pieceColor(color), pieceType(type),
+        pieceSymbol(color == PieceColor::White ? toupper(fromPieceTypeToChar(type)) : fromPieceTypeToChar(type))
 {
+}
 
+Piece::Piece(PieceColor color, PieceType type, char symbol) :
+        pieceColor(color), pieceType(type),
+        pieceSymbol(symbol)
+{
 }
 
 Piece::Optional Piece::fromSymbol(char symbol)
 {
-    switch (symbol)
+    PieceColor color = isupper(symbol) ? PieceColor::White : PieceColor::Black;
+    switch (tolower(symbol))
     {
-        case 'P':
-            return Piece(PieceColor::White, PieceType::Pawn);
         case 'p':
-            return Piece(PieceColor::Black, PieceType::Pawn);
-        case 'N':
-            return Piece(PieceColor::White, PieceType::Knight);
+            return Piece(color, PieceType::Pawn, symbol);
         case 'n':
-            return Piece(PieceColor::Black, PieceType::Knight);
-        case 'B':
-            return Piece(PieceColor::White, PieceType::Bishop);
+            return Piece(color, PieceType::Knight, symbol);
         case 'b':
-            return Piece(PieceColor::Black, PieceType::Bishop);
-        case 'R':
-            return Piece(PieceColor::White, PieceType::Rook);
+            return Piece(color, PieceType::Bishop, symbol);
         case 'r':
-            return Piece(PieceColor::Black, PieceType::Rook);
-        case 'Q':
-            return Piece(PieceColor::White, PieceType::Queen);
+            return Piece(color, PieceType::Rook, symbol);
         case 'q':
-            return Piece(PieceColor::Black, PieceType::Queen);
-        case 'K':
-            return Piece(PieceColor::White, PieceType::Queen);
+            return Piece(color, PieceType::Queen, symbol);
         case 'k':
-            return Piece(PieceColor::Black, PieceType::King);
+            return Piece(color, PieceType::King, symbol);
         default:
             return std::nullopt;
     }
-
 }
 
 PieceColor Piece::color() const
@@ -53,42 +48,45 @@ PieceType Piece::type() const
     return this->pieceType;
 }
 
+char Piece::symbol() const
+{
+    return pieceSymbol;
+}
+
+char fromPieceTypeToChar(const PieceType &pieceType)
+{
+    switch (pieceType)
+    {
+        case PieceType::Pawn:
+            return 'p';
+        case PieceType::Knight:
+            return 'n';
+        case PieceType::Bishop:
+            return 'b';
+        case PieceType::Rook:
+            return 'r';
+        case PieceType::Queen:
+            return 'q';
+        case PieceType::King:
+            return 'k';
+        default:
+            throw std::invalid_argument("Not existing PieceType");
+    }
+}
+
 bool operator==(const Piece &lhs, const Piece &rhs)
 {
-    if (lhs.color() == rhs.color() && lhs.type() == rhs.type())
-        return true;
-    else return false;
+    return lhs.color() == rhs.color() && lhs.type() == rhs.type();
 }
 
 std::ostream &operator<<(std::ostream &os, const Piece &piece)
 {
-    char piece_char;
-    switch (piece.type())
-    {
-        case PieceType::Pawn:
-            piece_char = 'p';
-            break;
-        case PieceType::Knight:
-            piece_char = 'n';
-            break;
-        case PieceType::Bishop:
-            piece_char = 'b';
-            break;
-        case PieceType::Rook:
-            piece_char = 'r';
-            break;
-        case PieceType::Queen:
-            piece_char = 'q';
-            break;
-        case PieceType::King:
-            piece_char = 'k';
-            break;
-    }
-    if (piece.color() == PieceColor::White)
-    {
-        piece_char = std::toupper(piece_char);
-    }
-    return os << piece_char;
+    return os << piece.symbol();
+}
+
+std::ostream &operator<<(std::ostream &os, const PieceType &pieceType)
+{
+    return os << fromPieceTypeToChar(pieceType);
 }
 
 PieceColor operator!(PieceColor color)

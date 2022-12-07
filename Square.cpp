@@ -1,58 +1,72 @@
 #include "Square.hpp"
 
 #include <ostream>
+#include <iostream>
 
-Square::Square(Index index)
+Square::Square(Index index) :
+        index_(index)
 {
-    (void)index;
+
 }
 
-Square::Optional Square::fromCoordinates(Coordinate file, Coordinate rank) {
-    (void)file;
-    (void)rank;
+Square::Optional Square::fromCoordinates(Coordinate file, Coordinate rank)
+{
+    if (file < 8 && rank < 8)
+    {
+        return Square(8 * rank + file);
+    }
     return std::nullopt;
 }
 
-Square::Optional Square::fromIndex(Index index) {
-    (void)index;
-    return std::nullopt;
+Square::Optional Square::fromIndex(Index index)
+{
+    if (index < 64)
+        return Square(index);
+    else return std::nullopt;
 }
 
-Square::Optional Square::fromName(const std::string& name) {
-    (void)name;
-    return std::nullopt;
+Square::Optional Square::fromName(const std::string &name)
+{
+    unsigned file = name[0] - 'a';
+    unsigned rank = (name[1] - '1') * 8;
+    if (rank > 56 || file > 7 || name.length() > 2)
+        return std::nullopt;
+    else return Square(rank + file);
 }
 
-Square::Coordinate Square::file() const {
-    return 0;
+Square::Coordinate Square::file() const
+{
+    return index_ % 8;
 }
 
-Square::Coordinate Square::rank() const {
-    return 0;
+Square::Coordinate Square::rank() const
+{
+    return index_ / 8;
 }
 
-Square::Index Square::index() const {
-    return 0;
+Square::Index Square::index() const
+{
+    return index_;
 }
 
 
-const Square Square::A1 = Square( 0 + 0);
-const Square Square::B1 = Square( 0 + 1);
-const Square Square::C1 = Square( 0 + 2);
-const Square Square::D1 = Square( 0 + 3);
-const Square Square::E1 = Square( 0 + 4);
-const Square Square::F1 = Square( 0 + 5);
-const Square Square::G1 = Square( 0 + 6);
-const Square Square::H1 = Square( 0 + 7);
+const Square Square::A1 = Square(0 + 0);
+const Square Square::B1 = Square(0 + 1);
+const Square Square::C1 = Square(0 + 2);
+const Square Square::D1 = Square(0 + 3);
+const Square Square::E1 = Square(0 + 4);
+const Square Square::F1 = Square(0 + 5);
+const Square Square::G1 = Square(0 + 6);
+const Square Square::H1 = Square(0 + 7);
 
-const Square Square::A2 = Square( 8 + 0);
-const Square Square::B2 = Square( 8 + 1);
-const Square Square::C2 = Square( 8 + 2);
-const Square Square::D2 = Square( 8 + 3);
-const Square Square::E2 = Square( 8 + 4);
-const Square Square::F2 = Square( 8 + 5);
-const Square Square::G2 = Square( 8 + 6);
-const Square Square::H2 = Square( 8 + 7);
+const Square Square::A2 = Square(8 + 0);
+const Square Square::B2 = Square(8 + 1);
+const Square Square::C2 = Square(8 + 2);
+const Square Square::D2 = Square(8 + 3);
+const Square Square::E2 = Square(8 + 4);
+const Square Square::F2 = Square(8 + 5);
+const Square Square::G2 = Square(8 + 6);
+const Square Square::H2 = Square(8 + 7);
 
 const Square Square::A3 = Square(16 + 0);
 const Square Square::B3 = Square(16 + 1);
@@ -108,19 +122,17 @@ const Square Square::F8 = Square(56 + 5);
 const Square Square::G8 = Square(56 + 6);
 const Square Square::H8 = Square(56 + 7);
 
-std::ostream& operator<<(std::ostream& os, const Square& square) {
-    (void)square;
-    return os;
+std::ostream &operator<<(std::ostream &os, const Square &square)
+{
+    return os << static_cast<char>('a' + square.file()) << square.rank() + 1;
 }
 
-bool operator<(const Square& lhs, const Square& rhs) {
-    (void)lhs;
-    (void)rhs;
-    return false;
+bool operator<(const Square &lhs, const Square &rhs)
+{
+    return lhs.index() < rhs.index();
 }
 
-bool operator==(const Square& lhs, const Square& rhs) {
-    (void)lhs;
-    (void)rhs;
-    return false;
+bool operator==(const Square &lhs, const Square &rhs)
+{
+    return lhs.index() == rhs.index();
 }
