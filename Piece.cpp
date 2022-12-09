@@ -48,6 +48,10 @@ PieceType Piece::type() const
     return this->pieceType;
 }
 
+void Piece::setType(PieceType type){
+    this->pieceType = type;
+}
+
 char Piece::symbol() const
 {
     return pieceSymbol;

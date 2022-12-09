@@ -34,12 +34,13 @@ public:
 
     PieceColor color() const;
     PieceType type() const;
+    void setType(PieceType type);
     char symbol() const;
 
 private:
-    PieceColor const pieceColor;
-    PieceType const pieceType;
-    char const pieceSymbol;
+    PieceColor pieceColor;
+    PieceType pieceType;
+    char pieceSymbol;
 };
 
 char fromPieceTypeToChar(const PieceType &pieceType);

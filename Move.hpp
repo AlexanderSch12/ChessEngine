@@ -25,7 +25,7 @@ public:
 private:
     const Square from_;
     const Square  to_;
-    const std::optional<PieceType> promotion_;
+    std::optional<PieceType> promotion_;
 
 };
 

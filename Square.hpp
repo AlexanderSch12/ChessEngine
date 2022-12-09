@@ -28,10 +28,10 @@ public:
     static const Square A6, B6, C6, D6, E6, F6, G6, H6;
     static const Square A7, B7, C7, D7, E7, F7, G7, H7;
     static const Square A8, B8, C8, D8, E8, F8, G8, H8;
-
+    Square(Index index);
 private:
 
-    Square(Index index);
+
     Index index_;
 };
 

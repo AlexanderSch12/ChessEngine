@@ -20,40 +20,31 @@ public:
     Board();
 
     void setPiece(const Square &square, const Piece::Optional &piece);
-
     Piece::Optional piece(const Square &square) const;
 
     void setTurn(PieceColor turn);
-
     PieceColor turn() const;
 
     void setCastlingRights(CastlingRights cr);
-
     CastlingRights castlingRights() const;
 
     void setEnPassantSquare(const Square::Optional &square);
-
     Square::Optional enPassantSquare() const;
 
     void makeMove(const Move &move);
-
     void pseudoLegalMoves(MoveVec &moves) const;
-
     void pseudoLegalMovesFrom(const Square &from, MoveVec &moves) const;
+    void addMove(Board::MoveVec &moves, Square::Index from, Square::Index to) const;
+    static void addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index to) ;
+    bool isEmpty(Square::Index square) const;
 
-    static int pieceTypeIntoInt(const PieceType &pieceType);
+    std::vector<Piece::Optional> board() const;
 
 private:
-    std::vector<int> board;
-
-    // 0 | 000
-    // Color bit | type bits
-    const static int empty = 0, pawn = 1, knight = 2, bishop = 3, rook = 4, queen = 5, king = 6;
-    // White = 1, Black = 0;
-    const static int white = 8;
-    const static std::unordered_map<int , PieceType> intToPieceType;
-
+    std::vector<Piece::Optional> board_;
     PieceColor turn_;
+    CastlingRights cr_;
+    Square::Optional ep_;
 };
 
 std::ostream &operator<<(std::ostream &os, const Board &board);
