@@ -18,7 +18,8 @@ enum class PieceType
     Bishop,
     Rook,
     Queen,
-    King
+    King,
+    Empty
 };
 
 class Piece
