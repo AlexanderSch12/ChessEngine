@@ -109,6 +109,5 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
             pv.moves().push_back(move);
         }
     }
-    std::cout << "alpha returned: " << alpha << std::endl;
     return alpha;
 }
