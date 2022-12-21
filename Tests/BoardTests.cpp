@@ -412,7 +412,7 @@ TEST_CASE_PSEUDO_MOVES("Pseudo-legal pawn moves, en passant, white left", "[Pawn
         "8/8/2n5/pP6/8/8/8/8 w - a6 0 1",
         "b5",
         {
-            "a6", "b6", "c6"
+                "b6","c6","a6"
         }
     );
 }
@@ -630,6 +630,20 @@ TEST_CASE_PSEUDO_MOVES("Pseudo-legal castling moves, no rights", "[Castling]") {
         }
     );
 }
+//TEST_CASE_PSEUDO_MOVES("Legal moves Black", "[Check]")
+//{
+//    testPseudoLegalMoves(
+//            // https://lichess.org/editor/4k2R/3p4/5b2/8/B7/8/8/8_b_-_-_0_1?color=white
+//            "4k2R/3p4/5b2/8/B7/8/6r1/8 b - - 0 1",
+//            "",
+//            {
+//                    "g2g8",
+//                    "f6h8",
+//                    "e8e7",
+//                    "e8f7"
+//            }
+//    );
+//}
 
 static void testMakeMove(const char* fen, const Move& move) {
     auto board = Fen::createBoard(fen);
@@ -937,9 +951,12 @@ TEST_CASE_PSEUDO_MOVES("Pseudo-legal moves, multiple pieces, black", "") {
         "7n/7b/6p1/8/8/8/8/8 b - - 0 1",
         "",
         {
-            "h8f7",
             "h7g8",
+            "h8f7",
             "g6g5"
         }
     );
 }
+
+
+
