@@ -65,7 +65,7 @@ private:
     static const int inf = 9999999;
     static const int neg_inf = -inf;
 
-    int evaluate(Board &board);
+    static int evaluate(Board &board);
 
     int negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation& pv);
 };

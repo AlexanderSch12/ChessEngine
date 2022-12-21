@@ -55,11 +55,11 @@ public:
     void pseudoLegalMoves(MoveVec &moves);
     std::vector<Move> filterLegalMoves(MoveVec &moves);
 
-    void pseudoLegalMovesFrom(const Square &from, MoveVec &moves) const;
+    void pseudoLegalMovesFrom(const Square &from, MoveVec &moves);
 
-    void addMove(Board::MoveVec &moves, Square::Index from, Square::Index to) const;
+    void addMove(Board::MoveVec &moves, Square::Index from, Square::Index to);
 
-    static void addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index to);
+    void addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index to);
     bool isKingCheck(int color) const;
     bool isAttacked(int attacked) const;
 

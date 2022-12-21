@@ -35,7 +35,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 {
     auto pv = PrincipalVariation();
     pv.mate = false;
-    negamax(board, 10, neg_inf, inf, pv);
+    negamax(board, 6, neg_inf, inf, pv);
     return pv;
     (void) time;
 }

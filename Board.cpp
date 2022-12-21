@@ -263,7 +263,7 @@ void Board::pseudoLegalMoves(MoveVec &moves)
             pseudoLegalMovesFrom(Square(index), moves);
         }
     }
-    moves = filterLegalMoves(moves);
+  //  moves = filterLegalMoves(moves);
 }
 
 std::vector<Move> Board::filterLegalMoves(MoveVec &moves)
@@ -279,7 +279,7 @@ std::vector<Move> Board::filterLegalMoves(MoveVec &moves)
     return legal_moves;
 }
 
-void Board::pseudoLegalMovesFrom(const Square &from, Board::MoveVec &moves) const
+void Board::pseudoLegalMovesFrom(const Square &from, Board::MoveVec &moves)
 {
     int position = from.index();
     int piece = board_[position];
@@ -434,26 +434,36 @@ void Board::pseudoLegalMovesFrom(const Square &from, Board::MoveVec &moves) cons
     }
 }
 
-void Board::addMove(Board::MoveVec &moves, Square::Index from, Square::Index to) const
+void Board::addMove(Board::MoveVec &moves, Square::Index from, Square::Index to)
 {
     int pieceTo = board_[to];
     if (isEmpty(pieceTo) || (!isEmpty(pieceTo) && getColor(pieceTo) != turn_))
     {
-        moves.push_back(Move(from, Square(to)));
+            Move move = Move(from, Square(to));
+            PreviousState prevState = makeMoveSaveState(move);
+            if (!isKingCheck(prevState.turn)) moves.push_back(move);
+            reverseMove(move, prevState);
     }
 }
 
 void Board::addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index to)
 {
-    if (to >= 8 && to < 56)
-        moves.push_back(Move(from, Square(to)));
-    else
+    Move move = Move(from, Square(to));
+    PreviousState prevState = makeMoveSaveState(move);
+    if (!isKingCheck(prevState.turn))
     {
-        moves.push_back(Move(Square(from), Square(to), PieceType::Queen));
-        moves.push_back(Move(Square(from), Square(to), PieceType::Rook));
-        moves.push_back(Move(Square(from), Square(to), PieceType::Bishop));
-        moves.push_back(Move(Square(from), Square(to), PieceType::Knight));
+        if (to >= 8 && to < 56)
+            moves.push_back(move);
+        else
+        {
+            moves.push_back(Move(Square(from), Square(to), PieceType::Queen));
+            moves.push_back(Move(Square(from), Square(to), PieceType::Rook));
+            moves.push_back(Move(Square(from), Square(to), PieceType::Bishop));
+            moves.push_back(Move(Square(from), Square(to), PieceType::Knight));
+        }
     }
+    reverseMove(move, prevState);
+
 }
 
 bool Board::isKingCheck(int color) const

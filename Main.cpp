@@ -27,6 +27,13 @@ int main(int argc, char* argv[]) {
         auto pv = engine->pv(board.value());
         std::cout << "PV: " << pv << '\n';
         std::cout << board.value();
+        for(auto move: pv)
+        {
+            board->makeMove(move);
+            std::cout << "----- " << move << " -----" << std::endl;
+            std::cout << board.value();
+        }
+
     } else {
         auto uciLog = std::ofstream("uci-log.txt");
         auto uci = Uci(std::move(engine), std::cin, std::cout, uciLog);
