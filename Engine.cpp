@@ -1,6 +1,7 @@
 #include "Engine.hpp"
 
 #include <utility>
+#include <iostream>
 
 Engine_::Engine_(std::string name, std::string version, std::string author):
     name_(std::move(name)),version_(std::move(version)),author_(std::move(author))
@@ -34,7 +35,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 {
     auto pv = PrincipalVariation();
     pv.mate = false;
-    negamax(board, 2, neg_inf, inf, pv);
+    negamax(board, 5, neg_inf, inf, pv);
     return pv;
     (void) time;
 }
@@ -95,10 +96,10 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
         else return 0;
     }
 
-    for (Move move: legalMoves)
+    for (Move& move: legalMoves)
     {
         auto prev_state = board.makeMoveSaveState(move);
-        auto eval = -negamax(board, depth - 1, -alpha, -beta, pv);
+        auto eval = -negamax(board, depth - 1, -beta, -alpha, pv);
         board.reverseMove(move, prev_state);
 
         if (eval >= beta) return beta;
@@ -108,5 +109,6 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
             pv.moves().push_back(move);
         }
     }
+    std::cout << "alpha returned: " << alpha << std::endl;
     return alpha;
 }

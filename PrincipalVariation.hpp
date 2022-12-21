@@ -19,14 +19,14 @@ public:
     std::size_t length() const;
     MoveIter begin() const;
     MoveIter end() const;
-    std::vector<Move> moves() const;
+    std::vector<Move>& moves();
     bool mate;
 
-private:
     std::vector<Move> moves_;
+private:
 
 };
 
-std::ostream& operator<<(std::ostream& os, const PrincipalVariation& pv);
+std::ostream& operator<<(std::ostream& os, PrincipalVariation& pv);
 
 #endif

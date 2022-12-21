@@ -23,13 +23,14 @@ PrincipalVariation::MoveIter PrincipalVariation::end() const {
     return moves_.end();
 }
 
-std::vector<Move> PrincipalVariation::moves() const {
+std::vector<Move>& PrincipalVariation::moves(){
     return moves_;
 }
 
-std::ostream& operator<<(std::ostream& os, const PrincipalVariation& pv) {
+std::ostream& operator<<(std::ostream& os, PrincipalVariation& pv) {
     os << "[ ";
-    for (auto move : pv.moves()) os << move << " , ";
+    for (auto move : pv.moves()) os << move
+    << " , ";
     os << " ]";
     return os;
 }
