@@ -8,7 +8,12 @@ bool PrincipalVariation::isMate() const {
 }
 
 int PrincipalVariation::score() const {
-    return 0;
+    return score_;
+}
+
+void PrincipalVariation::setScore(int score)
+{
+    score_ = score;
 }
 
 std::size_t PrincipalVariation::length() const {

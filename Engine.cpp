@@ -48,8 +48,38 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 {
     auto pv = PrincipalVariation();
     pv.mate = false;
-    negamax(board, 3, neg_inf, inf, pv);
 
+    std::vector legalMoves = Board::MoveVec();
+    board.pseudoLegalMoves(legalMoves);
+
+    int alpha = neg_inf;
+    int beta = inf;
+    int maxScore = neg_inf;
+
+    for(int depth = 1 ; depth <=5 ; depth++)
+    {
+        for(Move& move : legalMoves)
+        {
+            PreviousState prev_state{};
+            board.makeMoveSaveState(move, prev_state);
+            auto eval = -negamax(board, depth - 1, -beta, -alpha);
+            board.reverseMove(prev_state);
+
+            if(eval>maxScore)
+            {
+                maxScore = eval;
+                pv.moves().clear();
+                pv.moves().emplace_back(move);
+            }
+
+            if (maxScore > alpha)
+            {
+                alpha = maxScore;
+            }
+            if (alpha >= beta) break;
+        }
+    }
+    pv.setScore(maxScore);
     return pv;
     (void) time;
 }
@@ -97,12 +127,10 @@ int Engine_::evaluate(Board &board)
     return (mgScore * mgPhase + egScore * egPhase) / 24;
 }
 
-int Engine_::negamax(Board &board, int depth, int alpha, int beta,
-                     PrincipalVariation &pv)
+int Engine_::negamax(Board &board, int depth, int alpha, int beta)
 {
     if (depth == 0)
     {
-        pv.moves().clear();
         return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
@@ -113,31 +141,21 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta,
     {
         if (board.isKingCheck(board.getBoardTurn()))
         {
-            pv.mate = true;
             return neg_inf;
         } else return 0;
     }
 
-    auto pv_buf = PrincipalVariation();
     for (Move &move: legalMoves)
     {
         PreviousState prev_state{};
         board.makeMoveSaveState(move, prev_state);
-
-        auto eval = -negamax(board, depth - 1, -beta, -alpha, pv_buf);
-
+        auto eval = -negamax(board, depth - 1, -beta, -alpha);
         board.reverseMove(prev_state);
 
         if (eval >= beta) return beta;
         if (eval > alpha)
         {
             alpha = eval;
-            pv.moves().clear();
-            pv.moves().push_back(move);
-            for (const auto &move_buf: pv_buf)
-            {
-                pv.moves().emplace_back(move_buf);
-            }
         }
     }
     return alpha;

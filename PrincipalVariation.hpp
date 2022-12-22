@@ -15,6 +15,7 @@ public:
 
     bool isMate() const;
     int score() const;
+    void setScore(int score);
 
     std::size_t length() const;
     MoveIter begin() const;
@@ -24,6 +25,7 @@ public:
 
     std::vector<Move> moves_;
 private:
+    int score_;
 
 };
 
