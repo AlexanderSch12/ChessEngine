@@ -190,8 +190,8 @@ private:
             -53, -34, -21, -11, -28, -14, -24, -43
     };
 
-    constexpr static const int mg_value[6] = {102, 357, 385, 497, 1045, 10};
-    constexpr static const int eg_value[6] = {114, 301, 317, 532, 956, 10};
+    constexpr static const int mg_value[6] = {82, 337, 365, 477, 1025, 0};
+    constexpr static const int eg_value[6] = {94, 281, 297, 512, 936, 0};
 
     const int *mg_pesto_table[6] =
             {
