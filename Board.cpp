@@ -70,8 +70,8 @@ void Board::makeMove(const Move &move)
 
 PreviousState Board::makeMoveSaveState(const Move &move,PreviousState& state)
 {
-    int to = move.to().index();
-    int from = move.from().index();
+    int to = move.getTo();
+    int from = move.getFrom();
 
 
     state.cr = cr_;
@@ -442,7 +442,7 @@ void Board::addMove(Board::MoveVec &moves, Square::Index from, Square::Index to)
     int pieceTo = board_[to];
     if (isEmpty(pieceTo) || (!isEmpty(pieceTo) && getColor(pieceTo) != turn_))
     {
-            Move move = Move(from, Square(to));
+            Move move = Move(Square(from), Square(to));
             PreviousState prevState;
             makeMoveSaveState(move,prevState);
             if (!isKingCheck(prevState.turn)) moves.push_back(move);
@@ -452,7 +452,7 @@ void Board::addMove(Board::MoveVec &moves, Square::Index from, Square::Index to)
 
 void Board::addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index to)
 {
-    Move move = Move(from, Square(to));
+    Move move = Move(from,to);
     PreviousState prevState;
     makeMoveSaveState(move,prevState);
     if (!isKingCheck(prevState.turn))

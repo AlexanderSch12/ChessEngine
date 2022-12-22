@@ -951,9 +951,9 @@ TEST_CASE_PSEUDO_MOVES("Pseudo-legal moves, multiple pieces, black", "") {
         "7n/7b/6p1/8/8/8/8/8 b - - 0 1",
         "",
         {
+            "g6g5",
             "h7g8",
-            "h8f7",
-            "g6g5"
+            "h8f7"
         }
     );
 }

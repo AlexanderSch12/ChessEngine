@@ -52,9 +52,11 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
     int alpha = neg_inf;
     int beta = inf;
 
-    auto eval = negamax(board, 5 - 1, -beta, -alpha, pv);
+    auto eval = negamax(board, 6 - 1, -beta, -alpha, pv);
 
-    pv.setScore(eval);
+    if(eval == neg_inf) pv.setScore(0);
+    else pv.setScore(eval);
+
     return pv;
     (void) time;
 }
@@ -107,6 +109,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     if (depth == 0)
     {
         pv.moves().clear();
+        pv.mate = false;
         return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
@@ -122,7 +125,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
         } else return 0;
     }
 
-    if(depth == 5)
+    if(depth == 6)
     {
         orderMoves(legalMoves,board);
     }
@@ -196,8 +199,5 @@ void Engine_::orderMoves(std::vector<Move>& moves, Board board)
         move.setScore(evaluate(board));
         board.reverseMove(state);
     }
-
-    std::sort(moves.begin(), moves.end(), [](Move& lhs, Move& rhs) {
-        return lhs.score() < rhs.score();
-    });
+    std::sort(moves.begin(), moves.end());
 }

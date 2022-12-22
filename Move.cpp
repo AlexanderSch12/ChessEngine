@@ -4,7 +4,7 @@
 
 Move::Move(const Square &from, const Square &to,
            const std::optional<PieceType> &promotion) :
-        from_(from), to_(to), score_(0), promotion_(promotion)
+        from_(from.index()), to_(to.index()), score_(0), promotion_(promotion)
 {
 
 }
@@ -53,6 +53,16 @@ std::optional<PieceType> Move::promotion() const
     return promotion_;
 }
 
+int Move::getFrom() const
+{
+    return from_;
+}
+
+int Move::getTo() const
+{
+    return to_;
+}
+
 std::ostream &operator<<(std::ostream &os, const Move &move)
 {
     auto promo = move.promotion();
@@ -66,10 +76,10 @@ std::ostream &operator<<(std::ostream &os, const Move &move)
 
 bool operator<(const Move &lhs, const Move &rhs)
 {
-    return lhs.from() < rhs.from() && lhs.to() < rhs.to();
+    return lhs.score() < rhs.score();
 }
 
 bool operator==(const Move &lhs, const Move &rhs)
 {
-    return lhs.from() == rhs.from() && lhs.to() == rhs.to() && lhs.promotion() == rhs.promotion();
+    return lhs.from().index() == rhs.from().index() && lhs.to().index() == rhs.to().index() && lhs.promotion() == rhs.promotion();
 }
