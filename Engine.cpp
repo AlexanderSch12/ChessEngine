@@ -52,7 +52,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
     int alpha = neg_inf;
     int beta = inf;
 
-    auto eval = negamax(board, 6 - 1, -beta, -alpha, pv);
+    auto eval = negamax(board, 5, -beta, -alpha, pv);
 
     if(eval == neg_inf) pv.setScore(0);
     else pv.setScore(eval);
@@ -125,7 +125,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
         } else return 0;
     }
 
-    if(depth == 6)
+    if(depth == 5)
     {
         orderMoves(legalMoves,board);
     }
