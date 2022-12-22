@@ -58,7 +58,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 {
     auto pv = PrincipalVariation();
     pv.mate = false;
-    negamax(board, 6, neg_inf, inf, pv);//,pos);
+    negamax(board, 5, neg_inf, inf, pv);//,pos);
 
     return pv;
     (void) time;
@@ -148,8 +148,9 @@ int Engine_::evaluate(Board &board)
     }
 
     int turn = board.getBoardTurn() == Board::white ? 1 : 0;
-    int mgScore = mg[turn] - mg[turn^1];
-    int egScore = eg[turn] - eg[turn^1];
+    int otherTurn = turn == 1 ? 0 : 1;
+    int mgScore = mg[turn] - mg[otherTurn];
+    int egScore = eg[turn] - eg[otherTurn];
     int mgPhase = currentGamePhase;
     if (mgPhase > 24) mgPhase = 24;
     int egPhase = 24 - mgPhase;
