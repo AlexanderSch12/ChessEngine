@@ -228,7 +228,7 @@ private:
     std::unordered_map<unsigned long long,HashInfo> transpositions;
 
     int evaluate(Board &board);
-    int negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv);
+    int negamax(Board &board, int depth, int alpha, int beta);//, PrincipalVariation &pv);
     int quiescenceEvaluate(Board &board, int alpha, int beta);
 
 };

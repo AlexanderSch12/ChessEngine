@@ -61,19 +61,19 @@ std::optional<HashInfo> Engine::hashInfo() const
 PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 {
     transpositions.clear();
-    auto pv = PrincipalVariation();
-    pv.mate = false;
+  //  auto pv = PrincipalVariation();
+   // pv.mate = false;
 //    int maxScore;
     std::vector legalMoves = Board::MoveVec();
     board.pseudoLegalMoves(legalMoves);
 
-    if (legalMoves.empty())
-    {
-        if (board.isKingCheck(board.getBoardTurn())) pv.mate = true;
-        else pv.setScore(0);
-
-        return pv;
-    }
+//    if (legalMoves.empty())
+//    {
+//        if (board.isKingCheck(board.getBoardTurn())) pv.mate = true;
+//        else pv.setScore(0);
+//
+//        return pv;
+//    }
 
     for (int depth = 1; depth <= 5; depth++)
     {
@@ -85,7 +85,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 //            auto pv_buf = PrincipalVariation();
 //            PreviousState prev_state{};
 //            board.makeMoveSaveState(move, prev_state);
-        negamax(board, depth - 1, -beta, -alpha, pv);
+        negamax(board, depth - 1, -beta, -alpha);//, pv);
 //            board.reverseMove(prev_state);
 //            if (eval > maxScore)
 //            {
@@ -109,6 +109,21 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 //    }
 //    pv.setScore(maxScore);
     }
+    auto pv = PrincipalVariation();
+
+    while (true)
+    {
+        auto hash = zHash(board);
+
+        if (transpositions.find(hash) == transpositions.end())
+            break;
+
+        Move move = transpositions.at(hash).bestMove;
+        pv.moves().push_back(move);
+
+        board.makeMove(move);
+    }
+
     return pv;
     (void) time;
 }
@@ -206,7 +221,7 @@ int Engine_::evaluate(Board &board)
     return (mgScore * mgPhase + egScore * egPhase) / 24;
 }
 
-int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv)
+int Engine_::negamax(Board &board, int depth, int alpha, int beta)//, PrincipalVariation &pv)
 {
     auto hash = zHash(board);
     if (transpositions.find(hash) != transpositions.end())
@@ -231,7 +246,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
 
     if (depth == 0)
     {
-        pv.moves().clear();
+        //pv.moves().clear();
         return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
@@ -242,19 +257,19 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     {
         if (board.isKingCheck(board.getBoardTurn()))
         {
-            pv.mate = true;
+           // pv.mate = true;
             return neg_inf;
         } else return 0;
     }
 
     int type = 3;
     unsigned bestMove_i = 0;
-    auto pv_buf = PrincipalVariation();
+    //auto pv_buf = PrincipalVariation();
     for (unsigned i = 0 ; i<legalMoves.size() ; i++)
     {
         PreviousState prev_state{};
         board.makeMoveSaveState(legalMoves[i], prev_state);
-        auto eval = -negamax(board, depth - 1, -beta, -alpha,pv_buf);
+        auto eval = -negamax(board, depth - 1, -beta, -alpha);//,pv_buf);
         board.reverseMove(prev_state);
 
         if (eval >= beta)
@@ -268,13 +283,13 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
             bestMove_i = i;
             type = 1;
             alpha = eval;
-            pv.moves().clear();
-            pv.moves().push_back(legalMoves[i]);
-            pv.mate = pv_buf.mate;
-            for (const auto &move_buf: pv_buf)
-            {
-                pv.moves().emplace_back(move_buf);
-            }
+//            pv.moves().clear();
+//            pv.moves().push_back(legalMoves[i]);
+//            pv.mate = pv_buf.mate;
+//            for (const auto &move_buf: pv_buf)
+//            {
+//                pv.moves().emplace_back(move_buf);
+//            }
         }
     }
     HashInfo info(legalMoves[bestMove_i],depth,alpha,type);
