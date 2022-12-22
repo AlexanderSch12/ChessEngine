@@ -9,19 +9,13 @@
 #include <optional>
 #include <cstddef>
 #include <utility>
-#include <unordered_set>
 
 
 struct HashInfo
 {
-    HashInfo(Move move, int d , int e, int type);
     std::size_t defaultSize;
-    Move bestMove;
-    int depth;
-    int eval;
-    int type_;
-    std::size_t  minSize;
-    std::size_t  maxSize;
+    std::size_t minSize;
+    std::size_t maxSize;
 };
 
 class Engine
@@ -196,8 +190,8 @@ private:
             -53, -34, -21, -11, -28, -14, -24, -43
     };
 
-    constexpr static const int mg_value[6] = {92, 347, 375, 487, 1125, 0};
-    constexpr static const int eg_value[6] = {104, 291, 307, 522, 946, 0};
+    constexpr static const int mg_value[6] = {82, 337, 365, 477, 1025, 0};
+    constexpr static const int eg_value[6] = {94, 281, 297, 512, 936, 0};
 
     const int *mg_pesto_table[6] =
             {
@@ -221,11 +215,6 @@ private:
     constexpr static const int gamePhase[12] = {0, 1, 1, 2, 4, 0, 0, 1, 1, 2, 4, 0};
     int mg_table[12][64]{};
     int eg_table[12][64]{};
-    unsigned long long int zTable[64][12];
-    int getIndex(int piece);
-    unsigned long long int zHash(Board& board);
-//    void sortMoves(std::vector<Move>& moves);
-    std::unordered_map<unsigned long long,HashInfo> transpositions;
 
     int evaluate(Board &board);
     int negamax(Board &board, int depth, int alpha, int beta);//, PrincipalVariation &pv);
