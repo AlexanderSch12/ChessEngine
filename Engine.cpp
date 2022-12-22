@@ -48,28 +48,40 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 {
     auto pv = PrincipalVariation();
     pv.mate = false;
-
+    int maxScore;
     std::vector legalMoves = Board::MoveVec();
     board.pseudoLegalMoves(legalMoves);
 
-    int alpha = neg_inf;
-    int beta = inf;
-    int maxScore = neg_inf;
+    if (legalMoves.empty())
+    {
+        if (board.isKingCheck(board.getBoardTurn())) pv.mate = true;
+        else pv.setScore(0);
+
+        return pv;
+    }
 
     for(int depth = 1 ; depth <=5 ; depth++)
     {
+        int alpha = neg_inf;
+        int beta = inf;
+        maxScore = neg_inf-1;
         for(Move& move : legalMoves)
         {
+            auto pv_buf = PrincipalVariation();
             PreviousState prev_state{};
             board.makeMoveSaveState(move, prev_state);
-            auto eval = -negamax(board, depth - 1, -beta, -alpha);
+            auto eval = -negamax(board, depth - 1, -beta, -alpha, pv_buf);
             board.reverseMove(prev_state);
-
             if(eval>maxScore)
             {
                 maxScore = eval;
                 pv.moves().clear();
-                pv.moves().emplace_back(move);
+                pv.moves().push_back(move);
+                pv.mate = pv_buf.mate;
+                for (const auto &move_buf: pv_buf)
+                {
+                    pv.moves().emplace_back(move_buf);
+                }
             }
 
             if (maxScore > alpha)
@@ -78,6 +90,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
             }
             if (alpha >= beta) break;
         }
+
     }
     pv.setScore(maxScore);
     return pv;
@@ -127,10 +140,11 @@ int Engine_::evaluate(Board &board)
     return (mgScore * mgPhase + egScore * egPhase) / 24;
 }
 
-int Engine_::negamax(Board &board, int depth, int alpha, int beta)
+int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv)
 {
     if (depth == 0)
     {
+        pv.moves().clear();
         return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
@@ -141,21 +155,31 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta)
     {
         if (board.isKingCheck(board.getBoardTurn()))
         {
+            pv.mate = true;
             return neg_inf;
-        } else return 0;
+        }
+        else return 0;
     }
 
+    auto pv_buf = PrincipalVariation();
     for (Move &move: legalMoves)
     {
         PreviousState prev_state{};
         board.makeMoveSaveState(move, prev_state);
-        auto eval = -negamax(board, depth - 1, -beta, -alpha);
+        auto eval = -negamax(board, depth - 1, -beta, -alpha, pv_buf);
         board.reverseMove(prev_state);
 
         if (eval >= beta) return beta;
         if (eval > alpha)
         {
             alpha = eval;
+            pv.moves().clear();
+            pv.moves().push_back(move);
+            pv.mate = pv_buf.mate;
+            for (const auto &move_buf: pv_buf)
+            {
+                pv.moves().emplace_back(move_buf);
+            }
         }
     }
     return alpha;
