@@ -217,9 +217,9 @@ private:
     int eg_table[12][64]{};
 
     int evaluate(Board &board);
-    int negamax(Board &board, int depth, int alpha, int beta);//, PrincipalVariation &pv);
+    int negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv);
     int quiescenceEvaluate(Board &board, int alpha, int beta);
-
+    void orderMoves(std::vector<Move>& moves,Board board);
 };
 
 

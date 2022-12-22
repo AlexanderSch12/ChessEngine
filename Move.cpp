@@ -4,7 +4,7 @@
 
 Move::Move(const Square &from, const Square &to,
            const std::optional<PieceType> &promotion) :
-        from_(from), to_(to), promotion_(promotion)
+        from_(from), to_(to), score_(0), promotion_(promotion)
 {
 
 }
@@ -36,6 +36,17 @@ Square Move::to() const
 {
     return to_;
 }
+
+int Move::score() const
+{
+    return score_;
+}
+
+void Move::setScore(int score)
+{
+    score_ = score;
+}
+
 
 std::optional<PieceType> Move::promotion() const
 {

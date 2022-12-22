@@ -20,11 +20,14 @@ public:
 
     Square from() const;
     Square to() const;
+    int score() const;
+    void setScore(int score);
     std::optional<PieceType> promotion() const;
 
 private:
-    const Square from_;
-    const Square  to_;
+    Square from_;
+    Square  to_;
+    int score_;
     std::optional<PieceType> promotion_;
 
 };
