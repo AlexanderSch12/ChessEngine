@@ -216,19 +216,9 @@ private:
     int mg_table[12][64]{};
     int eg_table[12][64]{};
 
-    //unsigned long long int zTable[64][12];
-    // int getIndex(int piece);
-    // unsigned long long int getZHash(Board& board);
-
     int evaluate(Board &board);
-
-    //  static int materialScore(Board &board);
-
-    int negamax(Board &board, int depth, int alpha, int beta,
-                PrincipalVariation &pv); //, std::unordered_set<unsigned long long int>& positions);
+    int negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv);
     int quiescenceEvaluate(Board &board, int alpha, int beta);
-
-    //   static const int pawnValue = 100, knightValue = 350, bishopValue = 350, rookValue = 525, queenValue = 1000;
 
 };
 
