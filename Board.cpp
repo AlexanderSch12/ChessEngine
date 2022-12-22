@@ -64,23 +64,28 @@ Square::Optional Board::enPassantSquare() const
 
 void Board::makeMove(const Move &move)
 {
-    makeMoveSaveState(move);
+    PreviousState prevState;
+    makeMoveSaveState(move,prevState);
 }
 
-PreviousState Board::makeMoveSaveState(const Move &move)
+PreviousState Board::makeMoveSaveState(const Move &move,PreviousState& state)
 {
     int to = move.to().index();
     int from = move.from().index();
 
-    PreviousState state{};
+
     state.cr = cr_;
     state.turn = turn_;
     state.ep = ep_;
+    state.from = from;
+    state.to = to;
+    state.movingPiece = board_[from];
+    state.captured = board_[to];
 
     setCastling(from, to, false);
     setEnPassant(from, to, false);
 
-    state.captured = board_[to];
+
     board_[to] = board_[from];
     board_[from] = empty;
 
@@ -93,23 +98,20 @@ PreviousState Board::makeMoveSaveState(const Move &move)
 }
 
 
-void Board::reverseMove(const Move &move, PreviousState state)
+void Board::reverseMove(PreviousState& state)
 {
-    int to = move.to().index();
-    int from = move.from().index();
+    int to = state.to;
+    int from = state.from;
 
     turn_ = state.turn;
-    ep_ = state.ep;
-    board_[from] = board_[to];
+
+    board_[from] = state.movingPiece;
     board_[to] = state.captured;
+
     setCastling(from, to, true);
     setEnPassant(from, to, true);
     cr_ = state.cr;
-
-    if (move.promotion().has_value())
-    {
-        board_[from] = getColor(board_[from]) | pawn;
-    }
+    ep_ = state.ep;
 }
 
 void Board::setCastling(int from, int to, bool reverse)
@@ -272,9 +274,10 @@ std::vector<Move> Board::filterLegalMoves(MoveVec &moves)
     legal_moves.reserve(moves.size());
     for (auto move: moves)
     {
-        PreviousState prevState = makeMoveSaveState(move);
+        PreviousState prevState{};
+        makeMoveSaveState(move,prevState);
         if (!isKingCheck(prevState.turn)) legal_moves.push_back(move);
-        reverseMove(move, prevState);
+        reverseMove(prevState);
     }
     return legal_moves;
 }
@@ -440,16 +443,18 @@ void Board::addMove(Board::MoveVec &moves, Square::Index from, Square::Index to)
     if (isEmpty(pieceTo) || (!isEmpty(pieceTo) && getColor(pieceTo) != turn_))
     {
             Move move = Move(from, Square(to));
-            PreviousState prevState = makeMoveSaveState(move);
+            PreviousState prevState;
+            makeMoveSaveState(move,prevState);
             if (!isKingCheck(prevState.turn)) moves.push_back(move);
-            reverseMove(move, prevState);
+            reverseMove(prevState);
     }
 }
 
 void Board::addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index to)
 {
     Move move = Move(from, Square(to));
-    PreviousState prevState = makeMoveSaveState(move);
+    PreviousState prevState;
+    makeMoveSaveState(move,prevState);
     if (!isKingCheck(prevState.turn))
     {
         if (to >= 8 && to < 56)
@@ -462,7 +467,7 @@ void Board::addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index
             moves.push_back(Move(Square(from), Square(to), PieceType::Knight));
         }
     }
-    reverseMove(move, prevState);
+    reverseMove(prevState);
 
 }
 
@@ -705,6 +710,7 @@ int Board::pieceToInt(const Piece::Optional &piece)
     return pieceInt;
 }
 
+
 std::ostream &operator<<(std::ostream &os, const Board &board)
 {
     for (int i = 56; 0 <= i; i -= 8)
@@ -724,4 +730,5 @@ std::ostream &operator<<(std::ostream &os, const Board &board)
     }
     return os;
 }
+
 

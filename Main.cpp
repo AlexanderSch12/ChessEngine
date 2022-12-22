@@ -24,9 +24,10 @@ int main(int argc, char* argv[]) {
             return EXIT_FAILURE;
         }
 
+        std::cout << board.value();
         auto pv = engine->pv(board.value());
         std::cout << "PV: " << pv << '\n';
-        std::cout << board.value();
+
         for(auto move: pv)
         {
             board->makeMove(move);

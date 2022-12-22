@@ -11,6 +11,9 @@
 #include <vector>
 
 struct PreviousState{
+    int from;
+    int to;
+    int movingPiece;
     int captured;
     CastlingRights cr;
     int turn;
@@ -44,9 +47,9 @@ public:
     Square::Optional enPassantSquare() const;
 
     void makeMove(const Move &move);
-    PreviousState makeMoveSaveState(const Move &move);
+    PreviousState makeMoveSaveState(const Move &move, PreviousState& state);
 
-    void reverseMove(const Move &move, PreviousState state);
+    void reverseMove(PreviousState& state);
     void setCastling(int from, int to, bool reverse);
     void rookCastled(int position);
     void setEnPassant(int from, int to, bool reverse);
@@ -83,7 +86,6 @@ private:
     int turn_;
     CastlingRights cr_;
     int ep_;
-
 
 };
 

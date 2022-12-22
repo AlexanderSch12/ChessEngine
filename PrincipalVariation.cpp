@@ -29,8 +29,7 @@ std::vector<Move>& PrincipalVariation::moves(){
 
 std::ostream& operator<<(std::ostream& os, PrincipalVariation& pv) {
     os << "[ ";
-    for (auto move : pv.moves()) os << move
-    << " , ";
-    os << " ]";
+    for (auto move : pv.moves()) os << move << " ";
+    os << "]";
     return os;
 }
