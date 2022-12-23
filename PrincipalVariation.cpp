@@ -33,6 +33,7 @@ std::vector<Move>& PrincipalVariation::moves(){
 }
 
 std::ostream& operator<<(std::ostream& os, PrincipalVariation& pv) {
+    os << "Score: " << pv.score() << " ";
     os << "[ ";
     for (auto move : pv.moves()) os << move << " ";
     os << "]";

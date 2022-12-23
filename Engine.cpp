@@ -74,6 +74,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
             PreviousState prev_state{};
             board.makeMoveSaveState(move, prev_state);
             auto eval = -negamax(board, depth - 1, -beta, -alpha, pv_buf);
+            std::cout << "eval: " << eval;
             board.reverseMove(prev_state);
             if(eval>maxScore)
             {
@@ -241,16 +242,16 @@ void Engine_::orderMoves(std::vector<Move>& moves, Board board)
             {
                 PreviousState state{};
                 board.makeMoveSaveState(move1, state);
-                move1.setScore(evaluate(board));
+                move1.setScore(-evaluate(board));
                 board.reverseMove(state);
             }
              if(move2.score() == 0)
              {
                  PreviousState state{};
                  board.makeMoveSaveState(move2, state);
-                 move2.setScore(evaluate(board));
+                 move2.setScore(-evaluate(board));
                  board.reverseMove(state);
              }
-             return move1 < move2;
+             return move1.score() > move2.score();
          });
 }
