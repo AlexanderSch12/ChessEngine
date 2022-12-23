@@ -63,7 +63,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 
     orderMoves(legalMoves,board);
 
-    for(int depth = 1 ; depth <=3 ; depth++)
+    for(int depth = 1 ; depth <=4 ; depth++)
     {
         int alpha = neg_inf;
         int beta = inf;
@@ -158,7 +158,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     {
         pv.moves().clear();
         pv.mate = false;
-        return quiescenceEvaluate(board, alpha, beta);
+        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
     std::vector legalMoves = Board::MoveVec();
@@ -216,14 +216,9 @@ int Engine_::quiescenceEvaluate(Board &board, int alpha, int beta)
         if (board.board()[move.to().index()] != Board::empty)
         {
             captureMoves.push_back(move);
-            PreviousState state{};
-            board.makeMoveSaveState(move, state);
-            move.setScore(evaluate(board));
-            board.reverseMove(state);
         }
     }
-    std::sort(legalMoves.begin(), legalMoves.end());
-    //orderMoves(legalMoves,board);
+    orderMoves(captureMoves,board);
 
     for (Move &move: captureMoves)
     {
@@ -243,12 +238,23 @@ int Engine_::quiescenceEvaluate(Board &board, int alpha, int beta)
 
 void Engine_::orderMoves(std::vector<Move>& moves, Board board)
 {
-    for (auto &move: moves)
-    {
-        PreviousState state{};
-        board.makeMoveSaveState(move, state);
-        move.setScore(evaluate(board));
-        board.reverseMove(state);
-    }
-    std::sort(moves.begin(), moves.end());
+    std::sort(moves.begin(), moves.end(),
+         [this, &board](Move& move1, Move& move2) -> bool
+         {
+            if(move1.score() == 0)
+            {
+                PreviousState state{};
+                board.makeMoveSaveState(move1, state);
+                move1.setScore(evaluate(board));
+                board.reverseMove(state);
+            }
+             if(move2.score() == 0)
+             {
+                 PreviousState state{};
+                 board.makeMoveSaveState(move2, state);
+                 move2.setScore(evaluate(board));
+                 board.reverseMove(state);
+             }
+             return move1 < move2;
+         });
 }
