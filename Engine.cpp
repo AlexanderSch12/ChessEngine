@@ -105,20 +105,22 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 void Engine::setHashSize(std::size_t)
 {}
 
-int Engine_::evaluate(Board &board)
+int Engine_::evaluate(Board &board, int moveSize)
 {
-    std::vector legalMoves = Board::MoveVec();
-    board.pseudoLegalMoves(legalMoves);
 
-    if (legalMoves.empty())
+    if (moveSize == 0)
     {
         if (board.isKingCheck(board.getBoardTurn()))
         {
-           // pv.mate = true;
+            // pv.mate = true;
             return neg_inf;
         } else return 0;
     }
+    return evaluate(board);
+}
 
+int Engine_::evaluate(Board &board)
+{
     int midGameScores[2];
     int endgameScores[2];
     int currentGamePhase = 0;
@@ -169,6 +171,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
         pv.mate = false;
         return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
+
     std::vector legalMoves = Board::MoveVec();
     board.pseudoLegalMoves(legalMoves);
 
