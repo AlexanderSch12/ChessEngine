@@ -95,7 +95,9 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 //        }
 //
 //    }
-    pv.setScore(eval);
+    if(eval == neg_inf)  pv.setScore(0);
+    else pv.setScore(eval);
+
     return pv;
 
     (void) time;
