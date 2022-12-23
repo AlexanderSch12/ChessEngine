@@ -65,8 +65,8 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 //
 //    for(int depth = 1 ; depth <=5 ; depth++)
 //    {
-        int alpha = neg_inf;
-        int beta = inf;
+        int alpha = neg_inf+1;
+        int beta = inf-1;
 //        maxScore = neg_inf-1;
 //        for(Move& move : legalMoves)
 //        {
@@ -160,7 +160,6 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
 
     std::vector legalMoves = Board::MoveVec();
     board.pseudoLegalMoves(legalMoves);
-
 
     if (legalMoves.empty())
     {
