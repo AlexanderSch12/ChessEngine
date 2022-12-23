@@ -73,7 +73,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 //            auto pv_buf = PrincipalVariation();
 //            PreviousState prev_state{};
 //            board.makeMoveSaveState(move, prev_state);
-            auto eval = -negamax(board, 5, -beta, -alpha, pv);
+            auto eval = negamax(board, 3, -beta, -alpha, pv);
 //            board.reverseMove(prev_state);
 //            if(eval>maxScore)
 //            {
