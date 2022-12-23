@@ -109,6 +109,7 @@ int Engine_::evaluate(Board &board)
     int mg[2];
     int eg[2];
     int currentGamePhase = 0;
+//    int material[2];
 
     // i = 0 (black)
     // i = 1 (white)
@@ -116,6 +117,7 @@ int Engine_::evaluate(Board &board)
     {
         mg[i] = 0;
         eg[i] = 0;
+//        material[i] = 0;
     }
 
     for (int i = 0; i < 64; ++i)
@@ -128,6 +130,9 @@ int Engine_::evaluate(Board &board)
 
             int tableColor = pieceColor == Board::white ? 1 : 0;
             int tablePiece = pieceColor == Board::white ? pieceType + 5 : pieceType - 1;
+
+           // int pieceValue = eg_value[pieceType-1];
+
             mg[tableColor] += mg_table[tablePiece][i];
             eg[tableColor] += eg_table[tablePiece][i];
             currentGamePhase += gamePhase[tablePiece];
@@ -136,12 +141,15 @@ int Engine_::evaluate(Board &board)
 
     int turn = board.getBoardTurn() == Board::white ? 1 : 0;
     int otherTurn = turn == 1 ? 0 : 1;
-    int mgScore = mg[turn] - mg[otherTurn];
-    int egScore = eg[turn] - eg[otherTurn];
+
+    int mgScore = mg[otherTurn] - mg[turn];
+    int egScore = eg[otherTurn] - eg[turn];
     int mgPhase = currentGamePhase;
     if (mgPhase > 24) mgPhase = 24;
     int egPhase = 24 - mgPhase;
-    return (mgScore * mgPhase + egScore * egPhase) / 24;
+    int pesto = (mgScore * mgPhase + egScore * egPhase) / 24;
+
+    return pesto;
 }
 
 int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv)
@@ -150,7 +158,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     {
         pv.moves().clear();
         pv.mate = false;
-        return quiescenceEvaluate(board, alpha, beta);
+        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
     std::vector legalMoves = Board::MoveVec();
