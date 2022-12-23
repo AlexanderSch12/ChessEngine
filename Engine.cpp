@@ -166,7 +166,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     {
         pv.moves().clear();
         pv.mate = false;
-        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
+        return quiescenceEvaluate(board, alpha, beta);
     }
 
     orderMoves(legalMoves,board);
