@@ -63,17 +63,18 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 
     orderMoves(legalMoves,board);
 
-    for(int depth = 1 ; depth <=5; depth++)
+    for(int depth = 1 ; depth <=5 ; depth++)
     {
-        int alpha = neg_inf+1;
-        int beta = inf-1;
-        maxScore = neg_inf+1;
+        int alpha = neg_inf;
+        int beta = inf;
+        maxScore = neg_inf-1;
         for(Move& move : legalMoves)
         {
             auto pv_buf = PrincipalVariation();
             PreviousState prev_state{};
             board.makeMoveSaveState(move, prev_state);
-            auto eval = -negamax(board, depth-1, -beta, -alpha, pv_buf);
+            auto eval = -negamax(board, depth - 1, -beta, -alpha, pv_buf);
+            std::cout << "eval: " << eval;
             board.reverseMove(prev_state);
 
             if(eval>maxScore)
