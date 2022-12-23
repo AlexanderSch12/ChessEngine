@@ -241,14 +241,14 @@ void Engine_::orderMoves(std::vector<Move>& moves, Board board)
             {
                 PreviousState state{};
                 board.makeMoveSaveState(move1, state);
-                move1.setScore(-evaluate(board));
+                move1.setScore(evaluate(board));
                 board.reverseMove(state);
             }
              if(move2.score() == 0)
              {
                  PreviousState state{};
                  board.makeMoveSaveState(move2, state);
-                 move2.setScore(-evaluate(board));
+                 move2.setScore(evaluate(board));
                  board.reverseMove(state);
              }
              return move1 < move2;
