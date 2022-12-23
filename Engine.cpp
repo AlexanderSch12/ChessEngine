@@ -49,54 +49,53 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 {
     auto pv = PrincipalVariation();
     pv.mate = false;
-    int maxScore;
-    std::vector legalMoves = Board::MoveVec();
-    board.pseudoLegalMoves(legalMoves);
+//    int maxScore;
+//    std::vector legalMoves = Board::MoveVec();
+//    board.pseudoLegalMoves(legalMoves);
+//
+//    if (legalMoves.empty())
+//    {
+//        if (board.isKingCheck(board.getBoardTurn())) pv.mate = true;
+//        else pv.setScore(0);
+//
+//        return pv;
+//    }
 
-    if (legalMoves.empty())
-    {
-        if (board.isKingCheck(board.getBoardTurn())) pv.mate = true;
-        else pv.setScore(0);
-
-        return pv;
-    }
-
-    orderMoves(legalMoves,board);
-
-    for(int depth = 1 ; depth <=5 ; depth++)
-    {
+//    orderMoves(legalMoves,board);
+//
+//    for(int depth = 1 ; depth <=5 ; depth++)
+//    {
         int alpha = neg_inf;
         int beta = inf;
-        maxScore = neg_inf-1;
-        for(Move& move : legalMoves)
-        {
-            auto pv_buf = PrincipalVariation();
-            PreviousState prev_state{};
-            board.makeMoveSaveState(move, prev_state);
-            auto eval = -negamax(board, depth - 1, -beta, -alpha, pv_buf);
-            std::cout << "eval: " << eval;
-            board.reverseMove(prev_state);
-            if(eval>maxScore)
-            {
-                maxScore = eval;
-                pv.moves().clear();
-                pv.moves().push_back(move);
-                pv.mate = pv_buf.mate;
-                for (const auto &move_buf: pv_buf)
-                {
-                    pv.moves().emplace_back(move_buf);
-                }
-            }
-
-            if (maxScore > alpha)
-            {
-                alpha = maxScore;
-            }
-            if (alpha >= beta) break;
-        }
-
-    }
-    pv.setScore(maxScore);
+//        maxScore = neg_inf-1;
+//        for(Move& move : legalMoves)
+//        {
+//            auto pv_buf = PrincipalVariation();
+//            PreviousState prev_state{};
+//            board.makeMoveSaveState(move, prev_state);
+            auto eval = -negamax(board, 5, -beta, -alpha, pv);
+//            board.reverseMove(prev_state);
+//            if(eval>maxScore)
+//            {
+//                maxScore = eval;
+//                pv.moves().clear();
+//                pv.moves().push_back(move);
+//                pv.mate = pv_buf.mate;
+//                for (const auto &move_buf: pv_buf)
+//                {
+//                    pv.moves().emplace_back(move_buf);
+//                }
+//            }
+//
+//            if (maxScore > alpha)
+//            {
+//                alpha = maxScore;
+//            }
+//            if (alpha >= beta) break;
+//        }
+//
+//    }
+    pv.setScore(eval);
     return pv;
 
     (void) time;
