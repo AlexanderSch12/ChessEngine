@@ -443,7 +443,7 @@ void Board::addMove(Board::MoveVec &moves, Square::Index from, Square::Index to)
     if (isEmpty(pieceTo) || (!isEmpty(pieceTo) && getColor(pieceTo) != turn_))
     {
             Move move = Move(Square(from), Square(to));
-            PreviousState prevState;
+            PreviousState prevState{};
             makeMoveSaveState(move,prevState);
             if (!isKingCheck(prevState.turn)) moves.push_back(move);
             reverseMove(prevState);
@@ -453,7 +453,7 @@ void Board::addMove(Board::MoveVec &moves, Square::Index from, Square::Index to)
 void Board::addMovePawn(Board::MoveVec &moves, Square::Index from, Square::Index to)
 {
     Move move = Move(from,to);
-    PreviousState prevState;
+    PreviousState prevState{};
     makeMoveSaveState(move,prevState);
     if (!isKingCheck(prevState.turn))
     {
@@ -574,7 +574,7 @@ bool Board::isAttacked(int attackedPosition) const
             {
                 int attacker_type = getType(attacker);
                 if (attacker_type == queen || attacker_type == bishop ||
-                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == white)) &&
+                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == black)) &&
                      i == attackedPosition + 7))
                 {
                     return true;
@@ -592,7 +592,7 @@ bool Board::isAttacked(int attackedPosition) const
             {
                 int attacker_type = getType(attacker);
                 if (attacker_type == queen || attacker_type == bishop ||
-                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == black)) &&
+                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == white)) &&
                      i == attackedPosition - 7))
                 {
                     return true;
@@ -610,7 +610,7 @@ bool Board::isAttacked(int attackedPosition) const
             {
                 int attacker_type = getType(attacker);
                 if (attacker_type == queen || attacker_type == bishop ||
-                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == white)) &&
+                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == black)) &&
                      i == attackedPosition + 9))
                 {
                     return true;
@@ -628,7 +628,7 @@ bool Board::isAttacked(int attackedPosition) const
             {
                 int attacker_type = getType(attacker);
                 if (attacker_type == queen || attacker_type == bishop ||
-                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == black)) &&
+                    ((attacker_type == king || (attacker_type == pawn && getColor(attacker) == white)) &&
                      i == attackedPosition - 9))
                 {
                     return true;
