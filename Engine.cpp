@@ -216,9 +216,14 @@ int Engine_::quiescenceEvaluate(Board &board, int alpha, int beta)
         if (board.board()[move.to().index()] != Board::empty)
         {
             captureMoves.push_back(move);
+            PreviousState state{};
+            board.makeMoveSaveState(move, state);
+            move.setScore(evaluate(board));
+            board.reverseMove(state);
         }
     }
-    orderMoves(legalMoves,board);
+    std::sort(legalMoves.begin(), legalMoves.end());
+    //orderMoves(legalMoves,board);
 
     for (Move &move: captureMoves)
     {
