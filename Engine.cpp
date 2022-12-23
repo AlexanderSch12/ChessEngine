@@ -65,19 +65,18 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 
     for(int depth = 1 ; depth <= 5 ; depth++)
     {
-        int alpha = neg_inf+1;
-        int beta = inf-1;
-        maxScore = neg_inf+1;
+        int alpha = neg_inf;
+        int beta = inf;
+        maxScore = neg_inf;
         for(Move& move : legalMoves)
         {
             auto pv_buf = PrincipalVariation();
             PreviousState prev_state{};
             board.makeMoveSaveState(move, prev_state);
             auto eval = -negamax(board, depth - 1, -beta, -alpha, pv_buf);
-            std::cout << "eval: " << eval << std::endl;
             board.reverseMove(prev_state);
 
-            if(eval>maxScore)
+            if(eval>=maxScore)
             {
                 maxScore = eval;
                 pv.moves().clear();
@@ -106,8 +105,20 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 void Engine::setHashSize(std::size_t)
 {}
 
-int Engine_::evaluate(const Board &board)
+int Engine_::evaluate(Board &board)
 {
+    std::vector legalMoves = Board::MoveVec();
+    board.pseudoLegalMoves(legalMoves);
+
+    if (legalMoves.empty())
+    {
+        if (board.isKingCheck(board.getBoardTurn()))
+        {
+           // pv.mate = true;
+            return neg_inf;
+        } else return 0;
+    }
+
     int midGameScores[2];
     int endgameScores[2];
     int currentGamePhase = 0;
@@ -151,6 +162,13 @@ int Engine_::evaluate(const Board &board)
 
 int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv)
 {
+
+    if (depth == 0)
+    {
+        pv.moves().clear();
+        pv.mate = false;
+        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
+    }
     std::vector legalMoves = Board::MoveVec();
     board.pseudoLegalMoves(legalMoves);
 
@@ -161,13 +179,6 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
             pv.mate = true;
             return neg_inf;
         } else return 0;
-    }
-
-    if (depth == 0)
-    {
-        pv.moves().clear();
-        pv.mate = false;
-        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
     orderMoves(legalMoves,board);
