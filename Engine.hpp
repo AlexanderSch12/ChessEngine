@@ -217,8 +217,8 @@ private:
     int midGameValues[12][64]{};
     int endGameValues[12][64]{};
 
-    int evaluate(Board &board, int moveSize);
-    int evaluate(Board &board);
+    int evaluateSort(Board &board);
+    int evaluate(const Board &board);
 
     int negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv);
     int quiescenceEvaluate(Board &board, int alpha, int beta);

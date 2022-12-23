@@ -65,9 +65,9 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 
     for(int depth = 1 ; depth <= 5 ; depth++)
     {
-        int alpha = neg_inf;
-        int beta = inf;
-        maxScore = neg_inf;
+        int alpha = neg_inf+1;
+        int beta = inf-1;
+        maxScore = neg_inf+1;
         for(Move& move : legalMoves)
         {
             auto pv_buf = PrincipalVariation();
@@ -105,21 +105,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 void Engine::setHashSize(std::size_t)
 {}
 
-int Engine_::evaluate(Board &board, int moveSize)
-{
-
-    if (moveSize == 0)
-    {
-        if (board.isKingCheck(board.getBoardTurn()))
-        {
-            // pv.mate = true;
-            return neg_inf;
-        } else return 0;
-    }
-    return evaluate(board);
-}
-
-int Engine_::evaluate(Board &board)
+int Engine_::evaluate(const Board &board)
 {
     int midGameScores[2];
     int endgameScores[2];
@@ -161,16 +147,24 @@ int Engine_::evaluate(Board &board)
 
     return pestoScore;
 }
+int Engine_::evaluateSort(Board &board)
+{
+    std::vector legalMoves = Board::MoveVec();
+    board.pseudoLegalMoves(legalMoves);
+
+    if (legalMoves.empty())
+    {
+        if (board.isKingCheck(board.getBoardTurn()))
+        {
+            //pv.mate = true;
+            return neg_inf;
+        } else return 0;
+    }
+    return evaluate(board);
+}
 
 int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv)
 {
-
-    if (depth == 0)
-    {
-        pv.moves().clear();
-        pv.mate = false;
-        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
-    }
 
     std::vector legalMoves = Board::MoveVec();
     board.pseudoLegalMoves(legalMoves);
@@ -182,6 +176,13 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
             pv.mate = true;
             return neg_inf;
         } else return 0;
+    }
+
+    if (depth == 0)
+    {
+        pv.moves().clear();
+        pv.mate = false;
+        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
     orderMoves(legalMoves,board);
@@ -256,14 +257,14 @@ void Engine_::orderMoves(std::vector<Move>& moves, Board board)
             {
                 PreviousState state{};
                 board.makeMoveSaveState(move1, state);
-                move1.setScore(-evaluate(board));
+                move1.setScore(-evaluateSort(board));
                 board.reverseMove(state);
             }
              if(move2.score() == 0)
              {
                  PreviousState state{};
                  board.makeMoveSaveState(move2, state);
-                 move2.setScore(-evaluate(board));
+                 move2.setScore(-evaluateSort(board));
                  board.reverseMove(state);
              }
              return move1.score() > move2.score();
