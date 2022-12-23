@@ -169,7 +169,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
         } else return 0;
     }
 
-    if(depth == 5 || depth == 4) orderMoves(legalMoves,board);
+    orderMoves(legalMoves,board);
 
     auto pv_buf = PrincipalVariation();
     for (Move &move: legalMoves)
