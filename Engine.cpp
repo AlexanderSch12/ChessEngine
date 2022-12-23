@@ -14,10 +14,10 @@ Engine_::Engine_(std::string name, std::string version, std::string author) :
     {
         for (index = 0; index < 64; index++)
         {
-            mg_table[piece][index] = mg_value[type] + mg_pesto_table[type][(index) ^ 56];
-            eg_table[piece][index] = eg_value[type] + eg_pesto_table[type][(index) ^ 56];
-            mg_table[piece + 6][index] = mg_value[type] + mg_pesto_table[type][index];
-            eg_table[piece + 6][index] = eg_value[type] + eg_pesto_table[type][index];
+            mg_table[piece][index] = mg_value[type] + mg_pesto_table[type][index];
+            eg_table[piece][index] = eg_value[type] + eg_pesto_table[type][index];
+            mg_table[piece + 6][index] = mg_value[type] + mg_pesto_table[type][(index) ^ 56];
+            eg_table[piece + 6][index] = eg_value[type] + eg_pesto_table[type][(index) ^ 56];
         }
     }
 }
