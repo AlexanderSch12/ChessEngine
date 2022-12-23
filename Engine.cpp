@@ -63,7 +63,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 
     orderMoves(legalMoves,board);
 
-    for(int depth = 1 ; depth <=4 ; depth++)
+    for(int depth = 1 ; depth <=3 ; depth++)
     {
         int alpha = neg_inf;
         int beta = inf;
@@ -158,7 +158,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     {
         pv.moves().clear();
         pv.mate = false;
-        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
+        return quiescenceEvaluate(board, alpha, beta);
     }
 
     std::vector legalMoves = Board::MoveVec();
