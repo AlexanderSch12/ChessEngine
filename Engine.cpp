@@ -150,7 +150,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     {
         pv.moves().clear();
         pv.mate = false;
-        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
+        return quiescenceEvaluate(board, alpha, beta);
     }
 
     std::vector legalMoves = Board::MoveVec();
@@ -210,6 +210,7 @@ int Engine_::quiescenceEvaluate(Board &board, int alpha, int beta)
             captureMoves.push_back(move);
         }
     }
+    orderMoves(legalMoves,board);
 
     for (Move &move: captureMoves)
     {
