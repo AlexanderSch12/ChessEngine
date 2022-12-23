@@ -14,10 +14,10 @@ Engine_::Engine_(std::string name, std::string version, std::string author) :
     {
         for (index = 0; index < 64; index++)
         {
-            mg_table[piece][index] = mg_value[type] + mg_pesto_table[type][index];
-            eg_table[piece][index] = eg_value[type] + eg_pesto_table[type][index];
-            mg_table[piece + 6][index] = mg_value[type] + mg_pesto_table[type][(index) ^ 56];
-            eg_table[piece + 6][index] = eg_value[type] + eg_pesto_table[type][(index) ^ 56];
+            mg_table[piece][index] = mg_value[type] + mg_pesto_table[type][(index)^56];
+            eg_table[piece][index] = eg_value[type] + eg_pesto_table[type][(index)^56];
+            mg_table[piece + 6][index] = mg_value[type] + mg_pesto_table[type][index];
+            eg_table[piece + 6][index] = eg_value[type] + eg_pesto_table[type][index];
         }
     }
 }
@@ -63,7 +63,7 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 
     orderMoves(legalMoves,board);
 
-    for(int depth = 1 ; depth <=5 ; depth++)
+    for(int depth = 1 ; depth <=4 ; depth++)
     {
         int alpha = neg_inf;
         int beta = inf;
@@ -125,11 +125,11 @@ int Engine_::evaluate(Board &board)
         int piece = board.board()[i];
         if (!Board::isEmpty(piece))
         {
-            int pieceType = Board::getType(piece);
+            int pieceType = Board::getType(piece)-1;
             int pieceColor = Board::getColor(piece);
 
             int tableColor = pieceColor == Board::white ? 1 : 0;
-            int tablePiece = pieceColor == Board::white ? pieceType + 5 : pieceType - 1;
+            int tablePiece = pieceColor == Board::white ? pieceType + 6 : pieceType;
 
            // int pieceValue = eg_value[pieceType-1];
 
@@ -142,8 +142,8 @@ int Engine_::evaluate(Board &board)
     int turn = board.getBoardTurn() == Board::white ? 1 : 0;
     int otherTurn = turn == 1 ? 0 : 1;
 
-    int mgScore = mg[otherTurn] - mg[turn];
-    int egScore = eg[otherTurn] - eg[turn];
+    int mgScore = mg[turn] - mg[otherTurn];
+    int egScore = eg[turn] - eg[otherTurn];
     int mgPhase = currentGamePhase;
     if (mgPhase > 24) mgPhase = 24;
     int egPhase = 24 - mgPhase;
