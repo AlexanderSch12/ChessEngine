@@ -142,8 +142,8 @@ int Engine_::evaluate(Board &board)
     int turn = board.getBoardTurn() == Board::white ? 1 : 0;
     int otherTurn = turn == 1 ? 0 : 1;
 
-    int mgScore = mg[otherTurn] - mg[turn];
-    int egScore = eg[otherTurn] - eg[turn];
+    int mgScore = mg[turn] - mg[otherTurn];
+    int egScore = eg[turn] - eg[otherTurn];
     int mgPhase = currentGamePhase;
     if (mgPhase > 24) mgPhase = 24;
     int egPhase = 24 - mgPhase;
