@@ -14,10 +14,10 @@ Engine_::Engine_(std::string name, std::string version, std::string author) :
     {
         for (index = 0; index < 64; index++)
         {
-            mg_table[piece][index] = mg_value[type] + mg_pesto_table[type][(index)^56];
-            eg_table[piece][index] = eg_value[type] + eg_pesto_table[type][(index)^56];
-            mg_table[piece + 6][index] = mg_value[type] + mg_pesto_table[type][index];
-            eg_table[piece + 6][index] = eg_value[type] + eg_pesto_table[type][index];
+            midGameValues[piece][index] = midGamePieceValues[type] + midGamePestoTables[type][(index)^56];
+            midGameValues[piece + 6][index] = midGamePieceValues[type] + midGamePestoTables[type][index];
+            endGameValues[piece][index] = endGamePieceValues[type] + endGamePestoTables[type][(index)^56];
+            endGameValues[piece + 6][index] = endGamePieceValues[type] + endGamePestoTables[type][index];
         }
     }
 }
@@ -104,20 +104,18 @@ PrincipalVariation Engine_::pv(Board &board, const TimeInfo::Optional &time)
 void Engine::setHashSize(std::size_t)
 {}
 
-int Engine_::evaluate(Board &board)
+int Engine_::evaluate(const Board &board)
 {
-    int mg[2];
-    int eg[2];
+    int midGameScores[2];
+    int endgameScores[2];
     int currentGamePhase = 0;
-//    int material[2];
 
     // i = 0 (black)
     // i = 1 (white)
     for (int i = 0; i < 2; i++)
     {
-        mg[i] = 0;
-        eg[i] = 0;
-//        material[i] = 0;
+        midGameScores[i] = 0;
+        endgameScores[i] = 0;
     }
 
     for (int i = 0; i < 64; ++i)
@@ -131,25 +129,22 @@ int Engine_::evaluate(Board &board)
             int tableColor = pieceColor == Board::white ? 1 : 0;
             int tablePiece = pieceColor == Board::white ? pieceType + 6 : pieceType;
 
-           // int pieceValue = eg_value[pieceType-1];
-
-            mg[tableColor] += mg_table[tablePiece][i];
-            eg[tableColor] += eg_table[tablePiece][i];
-            currentGamePhase += gamePhase[tablePiece];
+            midGameScores[tableColor] += midGameValues[tablePiece][i];
+            endgameScores[tableColor] += endGameValues[tablePiece][i];
+            currentGamePhase += gamePhases[tablePiece];
         }
     }
 
     int turn = board.getBoardTurn() == Board::white ? 1 : 0;
     int otherTurn = turn == 1 ? 0 : 1;
 
-    int mgScore = mg[turn] - mg[otherTurn];
-    int egScore = eg[turn] - eg[otherTurn];
-    int mgPhase = currentGamePhase;
-    if (mgPhase > 24) mgPhase = 24;
-    int egPhase = 24 - mgPhase;
-    int pesto = (mgScore * mgPhase + egScore * egPhase) / 24;
+    int midGameScore = midGameScores[turn] - midGameScores[otherTurn];
+    int endGameScore = endgameScores[turn] - endgameScores[otherTurn];
+    int midGamePhase = currentGamePhase > 24 ? 24 : currentGamePhase;
+    int endGamePhase = 24 - midGamePhase;
+    int pestoScore = (midGameScore * midGamePhase + endGameScore * endGamePhase) / 24;
 
-    return pesto;
+    return pestoScore;
 }
 
 int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVariation &pv)
@@ -164,6 +159,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     std::vector legalMoves = Board::MoveVec();
     board.pseudoLegalMoves(legalMoves);
 
+
     if (legalMoves.empty())
     {
         if (board.isKingCheck(board.getBoardTurn()))
@@ -173,7 +169,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
         } else return 0;
     }
 
-    orderMoves(legalMoves,board);
+    if(depth == 5 || depth == 4) orderMoves(legalMoves,board);
 
     auto pv_buf = PrincipalVariation();
     for (Move &move: legalMoves)
