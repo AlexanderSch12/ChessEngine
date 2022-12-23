@@ -487,14 +487,26 @@ bool Board::isKingCheck(int color) const
 bool Board::isAttacked(int attackedPosition) const
 {
     int col = attackedPosition % 8;
+    int row = attackedPosition / 8;
     int attackedColor = getColor(board_[attackedPosition]);
 
-    int attacker;
-    for (int jump: knight_jumps)
-    {
-        attacker = board_[attackedPosition + jump];
-        if (getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
-    }
+    int attacker = board_[attackedPosition - 17];
+    if (row >= 2 && col >= 1 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+    attacker = board_[attackedPosition - 15];
+    if (row >= 2 && col <= 6 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+    attacker = board_[attackedPosition - 10];
+    if (row >= 1 && col >= 2 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+    attacker = board_[attackedPosition - 6];
+    if (row >= 1 && col <= 5 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+    attacker = board_[attackedPosition + 6];
+    if (row <= 6 && col >= 2 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+    attacker = board_[attackedPosition + 10];
+    if (row <= 6 && col <= 5 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+    attacker = board_[attackedPosition + 15];
+    if (row <= 5 && col >= 1 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+    attacker = board_[attackedPosition + 17];
+    if (row <= 5 && col <= 6 && getType(attacker) == knight && getColor(attacker) != attackedColor) return true;
+
 
     for (int i = attackedPosition + 8; i < 64; i += 8) // Up
     {
