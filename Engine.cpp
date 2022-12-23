@@ -158,7 +158,7 @@ int Engine_::negamax(Board &board, int depth, int alpha, int beta, PrincipalVari
     {
         pv.moves().clear();
         pv.mate = false;
-        return quiescenceEvaluate(board, alpha, beta);
+        return evaluate(board);//quiescenceEvaluate(board, alpha, beta);
     }
 
     std::vector legalMoves = Board::MoveVec();
